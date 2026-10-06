@@ -9,10 +9,21 @@ import SourceReconstruction from './pages/SourceReconstruction';
 import VesselIntelligence from './pages/VesselIntelligence';
 import HypothesisTesting from './pages/HypothesisTesting';
 import Reports from './pages/Reports';
+import { useEffect } from "react";
+import { checkBackendHealth } from "./api/client";
 
 import { assets } from './data/assets';
 
 function App() {
+  useEffect(() => {
+  checkBackendHealth()
+    .then((data) => {
+      console.log("ORIGIN Backend:", data);
+    })
+    .catch((error) => {
+      console.error("ORIGIN Backend connection failed:", error);
+    });
+}, []);
   return (
     <Router>
       <div className="flex h-screen bg-abyssal text-slate-100 overflow-hidden font-sans relative">
