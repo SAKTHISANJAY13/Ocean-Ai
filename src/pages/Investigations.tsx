@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { mockIncidents } from '../data/mockData';
-import { Search, Filter, AlertTriangle, Activity, Clock, CheckCircle } from 'lucide-react';
+import { Search, AlertTriangle, Activity, Clock, CheckCircle } from 'lucide-react';
 
 export default function Investigations() {
   const navigate = useNavigate();
