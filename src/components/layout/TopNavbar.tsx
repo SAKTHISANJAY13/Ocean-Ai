@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { Bell, Clock, ShieldAlert, AlertTriangle, Info, X, ExternalLink } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Bell, Clock, ShieldAlert, AlertTriangle, Info, X, ExternalLink, LogOut, User as UserIcon } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/useAuth';
 
 interface AlertItem {
   id: string;
@@ -42,6 +43,14 @@ export default function TopNavbar() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(mockAlerts.length);
   const notifRef = useRef<HTMLDivElement>(null);
+
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login', { replace: true });
+  };
 
   useEffect(() => {
     const updateTime = () => {
@@ -127,7 +136,7 @@ export default function TopNavbar() {
               if (!showNotifications) setUnreadCount(0);
             }}
             aria-label="Toggle notifications"
-            className={`relative p-2 rounded-lg transition-all ${
+            className={`relative p-2 rounded-lg transition-all cursor-pointer ${
               showNotifications 
                 ? 'bg-slate-800 text-white ring-1 ring-accent-cyan/40' 
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
@@ -196,6 +205,42 @@ export default function TopNavbar() {
             </div>
           )}
         </div>
+
+        {/* Authenticated Investigator Profile & Logout */}
+        {user ? (
+          <div className="flex items-center gap-3 border-l border-slate-700/50 pl-4">
+            <div className="hidden sm:flex flex-col items-end">
+              <span className="text-xs font-semibold text-slate-200 tracking-wide font-sans">
+                {user.name}
+              </span>
+              <span className="text-[9px] font-mono text-accent-cyan uppercase tracking-wider">
+                {user.role}
+              </span>
+            </div>
+
+            <div className="w-8 h-8 rounded-full bg-accent-cyan/10 border border-accent-cyan/40 flex items-center justify-center text-accent-cyan shadow-[0_0_10px_rgba(6,182,212,0.3)]">
+              <UserIcon className="w-4 h-4" />
+            </div>
+
+            <button
+              onClick={handleLogout}
+              title="Sign Out of ORIGIN"
+              aria-label="Sign out of ORIGIN"
+              className="p-2 rounded-lg text-slate-400 hover:text-accent-red hover:bg-accent-red/10 border border-transparent hover:border-accent-red/30 transition-all cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <div className="border-l border-slate-700/50 pl-4">
+            <Link
+              to="/login"
+              className="px-3 py-1.5 rounded-lg bg-accent-cyan/20 border border-accent-cyan/40 text-accent-cyan font-mono text-xs hover:bg-accent-cyan/30 transition-all"
+            >
+              Sign In
+            </Link>
+          </div>
+        )}
       </div>
     </header>
   );
